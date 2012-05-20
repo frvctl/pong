@@ -19,12 +19,13 @@ import javax.swing.JPanel;
 
 /* =========================================================== *
  *  Created by: Ben Vest | May 12, 2012                        *
- *                                                             *
+ * =========================================================== *
  * Purpose: Initializes the game states and draws all of the   *
  * components, also performs collision detection.              *
  * =========================================================== *
- * TODO: - Add levels / increase of ball speed
+ * TODO: - Add levels / increase of ball speed                 *
  *       - Power-Ups!                                          *
+ *       - Add a settings menu with settings                   *
  * =========================================================== */
 public class Board extends JPanel implements Constants{
 
@@ -34,7 +35,6 @@ public class Board extends JPanel implements Constants{
     String titleMessage = "Pong Game";
     String title2Message = "Created By: Ben Vest";
     Ball ball;
-    Ball balls[];
     Paddle paddleRight;
     Paddle paddleLeft;
     
@@ -83,10 +83,10 @@ public class Board extends JPanel implements Constants{
     	exitButton.addActionListener(new ButtonListener());
     }
 
-        public void addNotify(){
-            super.addNotify();
-            gameInit();
-        }
+    public void addNotify(){
+    	super.addNotify();
+        gameInit();
+    }
         
     /* ================================================== *
      * Function: keyReleased | Return Type: Void          *
@@ -100,7 +100,7 @@ public class Board extends JPanel implements Constants{
         ball = new Ball();
         paddleRight = new Paddle();
         paddleLeft = new Paddle();
-        paddleRight.setX(700);
+        paddleRight.setX(700);   
      }
 
     /* =================================================== *
@@ -213,12 +213,12 @@ public class Board extends JPanel implements Constants{
         }        
     }
 
-    /* =================================================== *
-     * Class ScheduleTask | Extends TimerTask              *
-     * =================================================== *
-     * Purpose: Allows the timer to fire every 10ms        *
-     * effectivly creating the main game looping mechanism *
-     * =================================================== */
+    /* ==================================================== *
+     * Class ScheduleTask | Extends TimerTask               *
+     * ==================================================== *
+     * Purpose: Allows the timer to fire every 10ms         *
+     * effectively creating the main game looping mechanism *
+     * ==================================================== */
     class ScheduleTask extends TimerTask {
         /* ================================================== *
          * Function: run | Return Type: Void                  *
@@ -227,11 +227,7 @@ public class Board extends JPanel implements Constants{
          * ction and other functions every time the timer     *
          * fires, in the case of this timer that is every     *
          * 10 milli-seconds.                                  *
-         * ================================================== *
-         * Return: No return                                  *
-         * ================================================== *
-         * Parameters: No parameters                          *
-         * ================================================== */ 
+         * ================================================== */
         public void run() {        	
         	paddleRight.moveRight();
         	paddleLeft.moveLeft();
@@ -242,8 +238,21 @@ public class Board extends JPanel implements Constants{
         }
     }
     
-	
+	/* ====================================================== *
+	 * Class: ButtonListener | Inherits from: ActionListener  *
+	 * ====================================================== *
+	 * Purpose: Allows the buttons to be listened to by       * 
+	 * inheriting action listener and providing a class to    *
+	 * bind the buttons to.                                   *
+	 * ====================================================== */
 	class ButtonListener implements ActionListener{
+		/* ======================================================== *
+		 * Function: actionPerformed | Return Type: Void            *
+		 * ======================================================== *
+		 * Purpose: If a button is pressed this function determines *
+		 * which button was pressed and what action(s) to take      * 
+		 * depending on which button was pressed                    *
+		 * ======================================================== */
 		public void actionPerformed(ActionEvent e){
 			if(e.getSource() == startButton){
 				inMenu = false;
@@ -264,11 +273,7 @@ public class Board extends JPanel implements Constants{
      * sonds with the random direction is then set to     *
      * not being hit, allowing a collision to occur corr  *
      * ectly                                              *
-     * ================================================== *
-     * Return: No return                                  *
-     * ================================================== *
-     * Parameters: No parameters                          *
-     * ================================================== */ 
+     * ================================================== */
     public void resetBall(){
     	ball.setX(400);
     	ball.setY(400);
@@ -281,10 +286,6 @@ public class Board extends JPanel implements Constants{
      * ================================================== *
      * Purpose: Allows the score to be kept by checking   *
      * if the ball exceeds the bounds of the game.        *
-     * ================================================== *
-     * Return: No return                                  *
-     * ================================================== *
-     * Parameters: No parameters                          *
      * ================================================== */ 
 	public void handleScore() {
 		if (ball.getX() > Constants.WIDTH+200 
@@ -305,10 +306,6 @@ public class Board extends JPanel implements Constants{
      * ================================================== *
      * Purpose: Stops the game by canceling the timer and *
      * setting the boolean variable ingame to false       * 
-     * ================================================== *
-     * Return: No return                                  *
-     * ================================================== *
-     * Parameters: No parameters                          *
      * ================================================== */ 
     public void stopGame() {
     	inGame = false;
@@ -330,11 +327,7 @@ public class Board extends JPanel implements Constants{
      * reversed. If the ball hits the middle of the       *
      * paddle the x-direction is reversed and the y-dir   *
      * ection is set to 0.                                *      
-     * ================================================== *
-     * Return: No return                                  *
-     * ================================================== *
-     * Parameters: No parameters                          *
-     * ================================================== */ 
+     * ================================================== */
     public void handleCollision(){
     	
         int paddleRPos = paddleRight.getY();
@@ -449,6 +442,14 @@ public class Board extends JPanel implements Constants{
 	    }
 	}
 	
+    /* ================================================== *
+     * Function: handleAIPaddle | Return Type: void       *
+     * ================================================== *
+     * Purpose: Controls the left paddle using extremely  *
+     * basic Artificial Intelligence. The paddle moves    * 
+     * based off of where the ball is eventually catching *
+     * up to and defecting it.                            *
+     * ================================================== */
 	public void handleAIPaddle(){
 		if(ball.getX() < 400 && ball.getY() < paddleLeft.getY() + 10){
 			paddleLeft.moveUp();
